@@ -12,7 +12,8 @@ import jieba
 import tqdm
 
 import keras
-from kashgari.tasks.classification import CNNModel
+from kashgari.embeddings import BERTEmbedding
+from kashgari.tasks.classification import CNNModel, BLSTMModel
 
 filePath = os.path.dirname(os.path.realpath(__file__))
 fileName = os.path.basename(os.path.realpath(__file__))
@@ -59,11 +60,11 @@ def main():
     print(f"test data count: {len(test_x)}, {len(test_y)}")
 
     # 构建tensorboard
-    tf_board_callback = keras.callbacks.TensorBoard(log_dir='./logs', update_freq=1000)
+    tf_board_callback = keras.callbacks.TensorBoard(log_dir=os.path.join(filePath + '/logs'), update_freq=1000)
     # 加载预训练模块
-    # embedding = BERTEmbedding(BERT_CHN, 200)
-    # 还可以选择 `CNNLSTMModel` 和 `BLSTMModel`
-    model = CNNModel()
+    embedding = BERTEmbedding(BERT_CHN, 200)
+    # 还可以选择 `CNNModel`, `CNNLSTMModel` 和 `BLSTMModel`
+    model = BLSTMModel(embedding)
     model.fit(train_x, train_y, val_x, val_y, epochs=1, batch_size=128, fit_kwargs={'callbacks': [tf_board_callback]})
     # 在验证集上验证模型
     model.evaluate(test_x, test_y)
