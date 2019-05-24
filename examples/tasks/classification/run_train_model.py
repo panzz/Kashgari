@@ -7,11 +7,12 @@
 @time: 2019-05-24
 
 """
+import os
 import jieba
 import tqdm
 
 BERT_CHN = 'D:\\ShareFolder\\_LIPan\\vobs\\_datasets\\nlp\\bert\\chinese_L-12_H-768_A-12'
-THUCNEWS = 'D:\\ShareFolder\\_LIPan\\vobs\\_datasets\\nlp'
+THUCNEWS = 'D:\\ShareFolder\\_LIPan\\vobs\\_datasets\\nlp\\'
 
 FILENAMES = {
     'train': 'THUCNews/cnews.train.txt',
@@ -33,10 +34,10 @@ def read_data_file(path):
     return x_list, y_list
 
 
-def main():
-    test_x, test_y = read_data_file(FILENAMES['test'])
-    val_x, val_y = read_data_file(FILENAMES['valid'])
-    train_x, train_y = read_data_file(FILENAMES['train'])
+def main(): 
+    test_x, test_y = read_data_file(os.path.join(THUCNEWS, FILENAMES['test']))
+    val_x, val_y = read_data_file(os.path.join(THUCNEWS, FILENAMES['valid']))
+    train_x, train_y = read_data_file(os.path.join(THUCNEWS, FILENAMES['train']))
     # train_x, train_y = ChinaPeoplesDailyNerCorpus.get_sequence_tagging_data(
     #     'train')
     # val_x, val_y = ChinaPeoplesDailyNerCorpus.get_sequence_tagging_data(
