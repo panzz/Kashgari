@@ -14,6 +14,9 @@ import tqdm
 import keras
 from kashgari.tasks.classification import CNNModel
 
+filePath = os.path.dirname(os.path.realpath(__file__))
+fileName = os.path.basename(os.path.realpath(__file__))
+
 BERT_CHN = 'D:\\ShareFolder\\_LIPan\\vobs\\_datasets\\nlp\\bert\\chinese_L-12_H-768_A-12'
 THUCNEWS = 'D:\\ShareFolder\\_LIPan\\vobs\\_datasets\\nlp\\'
 
@@ -24,6 +27,7 @@ FILENAMES = {
 }
 
 def read_data_file(path):
+    print(f'read_data_file> {path} start...')
     lines = open(path, 'r', encoding='utf-8').read().splitlines()
     x_list = []
     y_list = []
@@ -34,6 +38,7 @@ def read_data_file(path):
             x_list.append(list(jieba.cut('\t'.join(rows[1:]))))
         else:
             print(rows)
+    print(f'read_data_file> {path} end')
     return x_list, y_list
 
 
@@ -44,7 +49,7 @@ def main():
     #     'validate')
     # test_x, test_y = ChinaPeoplesDailyNerCorpus.get_sequence_tagging_data(
     #     'test')
-
+    print('main> start')
     test_x, test_y = read_data_file(os.path.join(THUCNEWS, FILENAMES['test']))
     val_x, val_y = read_data_file(os.path.join(THUCNEWS, FILENAMES['valid']))
     train_x, train_y = read_data_file(os.path.join(THUCNEWS, FILENAMES['train']))
@@ -59,13 +64,11 @@ def main():
     # embedding = BERTEmbedding(BERT_CHN, 200)
     # 还可以选择 `CNNLSTMModel` 和 `BLSTMModel`
     model = CNNModel()
-    model.fit(train_x, train_y, 
-                y_validate=val_x, 
-                x_validate=val_y, 
-                epochs=1,
-                batch_size=128,
-              fit_kwargs={'callbacks': [tf_board_callback]})
-    model.save('./model')
+    model.fit(train_x, train_y, val_x, val_y, epochs=1, batch_size=128, fit_kwargs={'callbacks': [tf_board_callback]})
+    # 在验证集上验证模型
+    model.evaluate(test_x, test_y)
+    print('main> save model')
+    model.save(os.path.join(filePath + '/models/thucnews_bert_model'))
 
     # embedding = BERTEmbedding(BERT_CHN, 200)
     # # 还可以选择 `BLSTMModel` 和 `CNNLSTMModel`
