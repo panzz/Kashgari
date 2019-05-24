@@ -11,6 +11,9 @@ import os
 import jieba
 import tqdm
 
+import keras
+from kashgari.tasks.classification import CNNModel
+
 BERT_CHN = 'D:\\ShareFolder\\_LIPan\\vobs\\_datasets\\nlp\\bert\\chinese_L-12_H-768_A-12'
 THUCNEWS = 'D:\\ShareFolder\\_LIPan\\vobs\\_datasets\\nlp\\'
 
@@ -34,10 +37,7 @@ def read_data_file(path):
     return x_list, y_list
 
 
-def main(): 
-    test_x, test_y = read_data_file(os.path.join(THUCNEWS, FILENAMES['test']))
-    val_x, val_y = read_data_file(os.path.join(THUCNEWS, FILENAMES['valid']))
-    train_x, train_y = read_data_file(os.path.join(THUCNEWS, FILENAMES['train']))
+def main():
     # train_x, train_y = ChinaPeoplesDailyNerCorpus.get_sequence_tagging_data(
     #     'train')
     # val_x, val_y = ChinaPeoplesDailyNerCorpus.get_sequence_tagging_data(
@@ -45,9 +45,27 @@ def main():
     # test_x, test_y = ChinaPeoplesDailyNerCorpus.get_sequence_tagging_data(
     #     'test')
 
+    test_x, test_y = read_data_file(os.path.join(THUCNEWS, FILENAMES['test']))
+    val_x, val_y = read_data_file(os.path.join(THUCNEWS, FILENAMES['valid']))
+    train_x, train_y = read_data_file(os.path.join(THUCNEWS, FILENAMES['train']))
+
     print(f"train data count: {len(train_x)}, {len(train_y)}")
     print(f"validate data count: {len(val_x)}, {len(val_y)}")
     print(f"test data count: {len(test_x)}, {len(test_y)}")
+
+    # 构建tensorboard
+    tf_board_callback = keras.callbacks.TensorBoard(log_dir='./logs', update_freq=1000)
+    # 加载预训练模块
+    # embedding = BERTEmbedding(BERT_CHN, 200)
+    # 还可以选择 `CNNLSTMModel` 和 `BLSTMModel`
+    model = CNNModel()
+    model.fit(train_x, train_y, 
+                y_validate=val_x, 
+                x_validate=val_y, 
+                epochs=1,
+                batch_size=128,
+              fit_kwargs={'callbacks': [tf_board_callback]})
+    model.save('./model')
 
     # embedding = BERTEmbedding(BERT_CHN, 200)
     # # 还可以选择 `BLSTMModel` 和 `CNNLSTMModel`
