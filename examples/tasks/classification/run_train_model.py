@@ -34,9 +34,9 @@ def read_data_file(path):
 
 
 def main():
-    test_x, test_y = read_file(FILENAMES['test'])
-    val_x, val_y = read_file(FILENAMES['valid'])
-    train_x, train_y = read_file(FILENAMES['train'])
+    test_x, test_y = read_data_file(FILENAMES['test'])
+    val_x, val_y = read_data_file(FILENAMES['valid'])
+    train_x, train_y = read_data_file(FILENAMES['train'])
     # train_x, train_y = ChinaPeoplesDailyNerCorpus.get_sequence_tagging_data(
     #     'train')
     # val_x, val_y = ChinaPeoplesDailyNerCorpus.get_sequence_tagging_data(
