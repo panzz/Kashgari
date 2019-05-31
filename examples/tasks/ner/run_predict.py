@@ -6,38 +6,30 @@
 @time: 2019-05-24
 
 """
-import random
-import keras
-
-from kashgari.tasks.classification import CNNLSTMModel
-from kashgari.corpus import ChinaPeoplesDailyNerCorpus
-from kashgari.embeddings import BERTEmbedding
+import os
+import jieba
 from kashgari.tasks.seq_labeling import BLSTMCRFModel
-from kashgari.utils.logger import init_logger
-init_logger()
 
-BERT_CHN = 'D:\\ShareFolder\\_LIPan\\vobs\\_datasets\\nlp\\bert\\chinese_L-12_H-768_A-12'
+filePath = os.path.dirname(os.path.realpath(__file__))
+fileName = os.path.basename(os.path.realpath(__file__))
+
+
+BERT_MODEL = os.path.join(filePath, os.path.join(
+    'models', 'ber_bert_model_uncased_L12H768A12'))
+print(f"filePath:{filePath}, BERT_MODEL: {BERT_MODEL}")
 
 
 def main():
-    train_x, train_y = ChinaPeoplesDailyNerCorpus.get_sequence_tagging_data(
-        'train')
-    val_x, val_y = ChinaPeoplesDailyNerCorpus.get_sequence_tagging_data(
-        'validate')
-    test_x, test_y = ChinaPeoplesDailyNerCorpus.get_sequence_tagging_data(
-        'test')
-
-    print(f"train data count: {len(train_x)}, {len(train_y)}")
-    print(f"validate data count: {len(val_x)}, {len(val_y)}")
-    print(f"test data count: {len(test_x)}, {len(test_y)}")
-
     # test
-    new_model = BLSTMCRFModel.load_model('./bert_chn_model')
-    news = """「DeepMind 击败人类职业玩家的方式与他们声称的 AI 使命，以及所声称的『正确』方式完全相反。」
-    DeepMind 的人工智能 AlphaStar 一战成名，击败两名人类职业选手。掌声和欢呼之余，它也引起了一些质疑。在前天 DeepMind 举办的 AMA 中，AlphaStar 项目领导者 Oriol Vinyals 和 David Silver、职业玩家 LiquidTLO 与 LiquidMaNa 回答了一些疑问。不过困惑依然存在……
+    new_model = BLSTMCRFModel.load_model(BERT_MODEL)
     """
-    print(f"news: {news}")
-    res = new_model.predict(news, output_dict=True)
+    序列标注任务是中文自然语言处理（NLP）领域在句子层面中的主要任务，在给定的文本序列上预测序列中需要作出标注的标签。常见的子任务有命名实体识别（NER）、Chunk 提取以及词性标注（POS）等。
+    """
+    target_str = "Pretrained PyTorch models for Google's BERT, OpenAI GPT & GPT-2, Google/CMU Transformer-XL."
+    print(f"target_str: {target_str}")
+    # x = list(jieba.cut(target_str))
+    # print(f"x:{x}")
+    res = new_model.predict(target_str, output_dict=True)
     print(f"res: {res}")
 
 
