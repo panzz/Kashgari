@@ -77,6 +77,23 @@ def _load_data_and_labels(filename, encoding='utf-8'):
 
     return sents, labels
 
+class Corpus(object):
+    __corpus_name__ = ''
+    __zip_file__name = ''
+
+    __desc__ = ''
+
+    @classmethod
+    def get_classification_data(cls,
+                                is_test: bool = False,
+                                shuffle: bool = True,
+                                max_count: int = 0) -> Tuple[List[str], List[str]]:
+        pass
+
+    # @classmethod
+    # def get_info(cls):
+    #     raise NotImplementedError()
+
 class CoNLL2003Corpus(Corpus):
     __corpus_name__ = 'corpus/conll2003'
     __zip_file__name = 'corpus/conll2003.tar.gz'
